@@ -1,0 +1,816 @@
+{
+	"info": {
+		"_postman_id": "5ec65d9b-40fa-4e2c-bb07-d5a1c3b52bc8",
+		"name": "FunnelBeamTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12140335"
+	},
+	"item": [
+		{
+			"name": "Positives",
+			"item": [
+				{
+					"name": "Place Search API",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify Reponse from API\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var place_id_value = jsonData.candidates[0].place_id;\r",
+									"    var place_name = jsonData.candidates[0].name;\r",
+									"\r",
+									"    // Set place_id to environment variable\r",
+									"    pm.environment.set(\"place_id\", place_id_value);\r",
+									"\r",
+									"    // Set addressName to environment variable\r",
+									"    pm.environment.set(\"place_name\", place_name);\r",
+									"\r",
+									"    // Assert correct place was returned\r",
+									"   var inputParam = pm.request.url.query.get('input');\r",
+									"    pm.expect(jsonData.candidates[0].name.toLowerCase()).to.contains(decodeURI(inputParam));\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=highlands coffee&inputtype=textquery&key={{API_KEY}}",
+							"protocol": "https",
+							"host": [
+								"maps",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"maps",
+								"api",
+								"place",
+								"findplacefromtext",
+								"json"
+							],
+							"query": [
+								{
+									"key": "fields",
+									"value": "formatted_address,name,rating,geometry,geometry,place_id"
+								},
+								{
+									"key": "input",
+									"value": "highlands coffee"
+								},
+								{
+									"key": "inputtype",
+									"value": "textquery"
+								},
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Place Detail API",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify Reponse from API\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    var formatted_phone_number = jsonData.result.formatted_phone_number;",
+									"    var addressName = jsonData.result.name;",
+									"",
+									"   // Assert formatted_phone_number is not a null value",
+									"   pm.expect(formatted_phone_number).not.to.be.null;",
+									"",
+									"   // Assert place name is matched",
+									"    pm.expect(addressName).to.equal(pm.environment.get(\"place_name\"));",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number&place_id={{place_id}}&key={{API_KEY}}",
+							"protocol": "https",
+							"host": [
+								"maps",
+								"googleapis",
+								"com"
+							],
+							"path": [
+								"maps",
+								"api",
+								"place",
+								"details",
+								"json"
+							],
+							"query": [
+								{
+									"key": "fields",
+									"value": "name,rating,formatted_phone_number"
+								},
+								{
+									"key": "place_id",
+									"value": "{{place_id}}"
+								},
+								{
+									"key": "key",
+									"value": "{{API_KEY}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Negatives",
+			"item": [
+				{
+					"name": "Place search",
+					"item": [
+						{
+							"name": "missing input",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=&inputtype=textquery&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": ""
+										},
+										{
+											"key": "inputtype",
+											"value": "textquery"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "string input when inputtype = phone number",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=test address&inputtype=phonenumber&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": "test address"
+										},
+										{
+											"key": "inputtype",
+											"value": "phonenumber"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "wrong phonenumber format in input field",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('ZERO_RESULTS')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=-889289029999&inputtype=textquery&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": "-889289029999"
+										},
+										{
+											"key": "inputtype",
+											"value": "textquery"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid field list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')\r",
+											"    pm.expect(pm.response.json().error_message).to.equal(\r",
+											"        \"Error while parsing 'fields' parameter: Unsupported field name 'contact'. \"\r",
+											"    )\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id,contact&input=highland coffee&inputtype=textquery&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id,contact"
+										},
+										{
+											"key": "input",
+											"value": "highland coffee"
+										},
+										{
+											"key": "inputtype",
+											"value": "textquery"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid inputtype",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=highlands coffee&inputtype=invalid&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": "highlands coffee"
+										},
+										{
+											"key": "inputtype",
+											"value": "invalid"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "missing API_KEY",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('REQUEST_DENIED')\r",
+											"    pm.expect(pm.response.json().error_message).to.contains('You must use an API key to authenticate')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=highland coffee&inputtype=textquery&key=",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": "highland coffee"
+										},
+										{
+											"key": "inputtype",
+											"value": "textquery"
+										},
+										{
+											"key": "key",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid API_KEY",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {\r",
+											"    pm.expect(pm.response.json().status).to.equal('REQUEST_DENIED')\r",
+											"    pm.expect(pm.response.json().error_message).to.equal('The provided API key is invalid.')\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=highland coffee&inputtype=textquery&key=123456789",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"findplacefromtext",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "formatted_address,name,rating,geometry,geometry,place_id"
+										},
+										{
+											"key": "input",
+											"value": "highland coffee"
+										},
+										{
+											"key": "inputtype",
+											"value": "textquery"
+										},
+										{
+											"key": "key",
+											"value": "123456789"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Place detail",
+					"item": [
+						{
+							"name": "invalid field list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')",
+											"    pm.expect(pm.response.json().error_message).to.equal(",
+											"        \"Error while parsing 'fields' parameter: Unsupported field name 'contact'. \"",
+											"    )",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number,contact&place_id={{place_id}}&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"details",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "name,rating,formatted_phone_number,contact"
+										},
+										{
+											"key": "place_id",
+											"value": "{{place_id}}"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "missing place id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')",
+											"    pm.expect(pm.response.json().error_message).to.equal('Missing the placeid or reference parameter.')",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number&place_id=&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"details",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "name,rating,formatted_phone_number"
+										},
+										{
+											"key": "place_id",
+											"value": ""
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid place id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {",
+											"    pm.expect(pm.response.json().status).to.equal('INVALID_REQUEST')",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number&place_id=1456789&key={{API_KEY}}",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"details",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "name,rating,formatted_phone_number"
+										},
+										{
+											"key": "place_id",
+											"value": "1456789"
+										},
+										{
+											"key": "key",
+											"value": "{{API_KEY}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "missing API_KEY",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {",
+											"    pm.expect(pm.response.json().status).to.equal('REQUEST_DENIED')",
+											"    pm.expect(pm.response.json().error_message).to.contains('You must use an API key to authenticate')",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number&place_id={{place_id}}&key=",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"details",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "name,rating,formatted_phone_number"
+										},
+										{
+											"key": "place_id",
+											"value": "{{place_id}}"
+										},
+										{
+											"key": "key",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "invalid API_KEY",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Verify Reponse from API\", function () {",
+											"    pm.expect(pm.response.json().status).to.equal('REQUEST_DENIED')",
+											"    pm.expect(pm.response.json().error_message).to.equal('The provided API key is invalid.')",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "https://maps.googleapis.com/maps/api/place/details/json?fields=name,rating,formatted_phone_number&place_id={{place_id}}&key=123456789",
+									"protocol": "https",
+									"host": [
+										"maps",
+										"googleapis",
+										"com"
+									],
+									"path": [
+										"maps",
+										"api",
+										"place",
+										"details",
+										"json"
+									],
+									"query": [
+										{
+											"key": "fields",
+											"value": "name,rating,formatted_phone_number"
+										},
+										{
+											"key": "place_id",
+											"value": "{{place_id}}"
+										},
+										{
+											"key": "key",
+											"value": "123456789"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "place_id",
+			"value": ""
+		}
+	]
+}
