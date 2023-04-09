@@ -29,7 +29,7 @@
 									"\r",
 									"    // Assert correct place was returned\r",
 									"   var inputParam = pm.request.url.query.get('input');\r",
-									"    pm.expect(jsonData.candidates[0].name.toLowerCase()).to.contains(decodeURI(inputParam));\r",
+									"    pm.expect(jsonData.candidates[0].name).to.contains(decodeURI(inputParam));\r",
 									"});\r",
 									"\r",
 									""
@@ -42,7 +42,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=highlands coffee&inputtype=textquery&key={{API_KEY}}",
+							"raw": "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,name,rating,geometry,geometry,place_id&input=Highlands Coffee Đại Học Sư Phạm Đà Nẵng&inputtype=textquery&key={{API_KEY}}",
 							"protocol": "https",
 							"host": [
 								"maps",
@@ -63,7 +63,7 @@
 								},
 								{
 									"key": "input",
-									"value": "highlands coffee"
+									"value": "Highlands Coffee Đại Học Sư Phạm Đà Nẵng"
 								},
 								{
 									"key": "inputtype",
