@@ -31,4 +31,4 @@ jobs:
 
       # Runs a set of commands using the runners shell
       - name: Execute tests
-        run: newman run ./api-test-project/FunnelBeamTest.postman_collection.json -e ./api-test-project/FunnelBeam.postman_environment.json
+        run: newman run /home/runner/work/api-test-project/api-test-project/FunnelBeamTest.postman_collection.json -e /home/runner/work/api-test-project/api-test-project/FunnelBeam.postman_environment.json
